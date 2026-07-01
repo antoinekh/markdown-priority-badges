@@ -103,10 +103,6 @@ def _badge_element(level: str, color: str) -> etree.Element:
     """A styled inline badge <span> for `level` on background `color`."""
     el = etree.Element("span")
     el.set("class", f"task-prio task-prio--{level}")
-    # `title` gives a hover tooltip + assistive-tech hint in standard
-    # Python-Markdown / MkDocs. Note: Zensical's content pipeline keeps only
-    # `class` and `style` on inline HTML, so the tooltip is dropped there.
-    el.set("title", f"{level} priority")
     el.set("style", f"{_BADGE_STYLE}background-color:{color};color:{_text_color(color)};")
     el.text = level
     return el

@@ -134,11 +134,6 @@ def test_unresolvable_color_falls_back_to_white_text():
     assert "background-color:rgb(10,10,10);color:#fff" in html
 
 
-def test_badge_has_title_for_accessibility():
-    assert 'title="critical priority"' in render("!critical")
-    assert 'title="high priority"' in render("- [ ] ! do it")
-
-
 # --- Configurable levels ---------------------------------------------------
 
 
