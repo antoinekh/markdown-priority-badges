@@ -1,10 +1,20 @@
 # markdown-priority-badges
 
-A Python-Markdown extension that renders **priority badges** two ways: a `!` / `!!` shorthand on task-list items, and `!level` keywords inline anywhere. Works in Zensical, MkDocs, or plain Python-Markdown. The badge ships its own inline styles, so no external CSS is required.
+A Python-Markdown extension that renders **priority badges** two ways: `!level` keywords inline anywhere, and a `!` / `!!` shorthand on task-list items. Works in Zensical, MkDocs, or plain Python-Markdown. The badge ships its own inline styles, so no external CSS is required.
 
 ## Syntax
 
-Task-list shorthand (one `!` = high, two or more = critical):
+Inline keywords (`!low` / `!medium` / `!high` / `!critical`), anywhere (prose, headings, table cells):
+
+```markdown
+This migration is !critical and blocks the release.
+
+## !high Rotate the keys
+```
+
+Only the configured level keywords match, so an ordinary `!`, `!important`, or `!highest` in text is never touched.
+
+Task-list shorthand, a simplified form for checkbox items (one `!` = high, two or more = critical):
 
 ```markdown
 - [ ] ! Call the vendor back      <!-- HIGH badge -->
@@ -15,26 +25,16 @@ Task-list shorthand (one `!` = high, two or more = critical):
 
 The shorthand marker must come first (right after the checkbox) and be followed by a space, so `- [ ] !important note` is left untouched. Works with `-`, `*`, `+` bullets and both `[ ]` / `[x]` states.
 
-Inline keywords, anywhere (prose, headings, table cells):
-
-```markdown
-This migration is !critical and blocks the release.
-
-## !high Rotate the keys
-```
-
-Only the configured level keywords match, so an ordinary `!`, `!important`, or `!highest` in text is never touched.
-
 ## Levels
 
 Built-in levels (name → background color):
 
-| Level | Color |
-|-------|-------|
-| `low` | green `#2e7d32` |
-| `medium` | amber `#f9a825` |
-| `high` | orange `#ef6c00` |
-| `critical` | red `#d32f2f` |
+| Level      | Color            |
+| ---------- | ---------------- |
+| `low`      | green `#2e7d32`  |
+| `medium`   | amber `#f9a825`  |
+| `high`     | orange `#ef6c00` |
+| `critical` | red `#d32f2f`    |
 
 The `!` / `!!` task-list shorthand always maps to `high` / `critical`; lower levels are used via their inline keyword (`!low`, `!medium`). Badge text color (black or white) is chosen automatically for legibility against each background.
 
