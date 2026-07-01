@@ -48,15 +48,42 @@ _BADGE_STYLE = (
 )
 
 
+# Common CSS named colors, so `levels` can use a name as well as hex and still
+# get an auto-contrasted text color. Anything not resolvable to a hex triple
+# (other named colors, rgb()/hsl(), etc.) falls back to white text.
+_NAMED_COLORS = {
+    "black": "#000000", "white": "#ffffff", "gray": "#808080", "grey": "#808080",
+    "silver": "#c0c0c0", "red": "#ff0000", "maroon": "#800000", "orange": "#ffa500",
+    "yellow": "#ffff00", "olive": "#808000", "lime": "#00ff00", "green": "#008000",
+    "teal": "#008080", "aqua": "#00ffff", "cyan": "#00ffff", "blue": "#0000ff",
+    "navy": "#000080", "purple": "#800080", "fuchsia": "#ff00ff", "magenta": "#ff00ff",
+    "rebeccapurple": "#663399",
+}
+
+
+def _to_hex6(color: str) -> str | None:
+    """Normalize a CSS color to six hex digits, or None if it cannot be
+    resolved. Accepts 3-/6-digit hex and the common named colors above."""
+    c = color.strip().lower()
+    c = _NAMED_COLORS.get(c, c)
+    if not c.startswith("#"):
+        return None
+    h = c[1:]
+    if len(h) == 3:
+        h = "".join(ch * 2 for ch in h)
+    if len(h) == 6 and all(ch in "0123456789abcdef" for ch in h):
+        return h
+    return None
+
+
 def _text_color(bg: str) -> str:
-    """Black or white, whichever has the higher WCAG contrast against `bg`
-    (a ``#rrggbb`` string). Falls back to white for anything unparseable."""
-    if not (len(bg) == 7 and bg.startswith("#")):
+    """Black or white, whichever has the higher WCAG contrast against `bg`.
+    `bg` may be 3-/6-digit hex or a common named color; anything else falls
+    back to white."""
+    hex6 = _to_hex6(bg)
+    if hex6 is None:
         return "#fff"
-    try:
-        r, g, b = (int(bg[i : i + 2], 16) / 255 for i in (1, 3, 5))
-    except ValueError:
-        return "#fff"
+    r, g, b = (int(hex6[i : i + 2], 16) / 255 for i in (0, 2, 4))
 
     def lin(c: float) -> float:
         return c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
@@ -76,6 +103,7 @@ def _badge_element(level: str, color: str) -> etree.Element:
     """A styled inline badge <span> for `level` on background `color`."""
     el = etree.Element("span")
     el.set("class", f"task-prio task-prio--{level}")
+    el.set("title", f"{level} priority")
     el.set("style", f"{_BADGE_STYLE}background-color:{color};color:{_text_color(color)};")
     el.text = level
     return el

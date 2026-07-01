@@ -118,6 +118,27 @@ def test_badge_text_color_is_auto_contrasted():
     assert "color:#000" in render("!medium")
 
 
+def test_three_digit_hex_color_is_contrasted():
+    html = render("!low !high", levels={"low": "#eee", "high": "#003"})
+    assert "background-color:#eee;color:#000" in html  # light -> black
+    assert "background-color:#003;color:#fff" in html  # dark -> white
+
+
+def test_named_color_is_contrasted():
+    html = render("!low", levels={"low": "yellow"})
+    assert "background-color:yellow;color:#000" in html  # yellow is light
+
+
+def test_unresolvable_color_falls_back_to_white_text():
+    html = render("!low", levels={"low": "rgb(10,10,10)"})
+    assert "background-color:rgb(10,10,10);color:#fff" in html
+
+
+def test_badge_has_title_for_accessibility():
+    assert 'title="critical priority"' in render("!critical")
+    assert 'title="high priority"' in render("- [ ] ! do it")
+
+
 # --- Configurable levels ---------------------------------------------------
 
 
