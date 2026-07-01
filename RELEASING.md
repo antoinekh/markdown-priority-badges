@@ -13,4 +13,4 @@ Publishing uses PyPI **trusted publishing** (OIDC): no API token is stored; the 
 ## Each release
 
 1. Move the `## Unreleased` entries in `CHANGELOG.md` under a new `## x.y.z` heading and bump `version` in `pyproject.toml`.
-2. Commit, then tag and push: `git tag vX.Y.Z && git push origin main vX.Y.Z`. The `publish.yml` workflow builds and uploads to PyPI.
+2. Commit, then tag and push: `git tag vX.Y.Z && git push origin master vX.Y.Z`. The `publish.yml` workflow builds and uploads to PyPI.
