@@ -15,6 +15,10 @@ classifiers = [
     "Topic :: Documentation",
 ]
 
+[project.urls]
+Homepage = "https://github.com/antoinekh/markdown-priority-badges"
+Changelog = "https://github.com/antoinekh/markdown-priority-badges/blob/main/CHANGELOG.md"
+
 [dependency-groups]
 dev = ["pytest>=8.0", "pymdown-extensions>=10.0", "ruff>=0.8"]
 
