@@ -1,5 +1,10 @@
 # markdown-priority-badges
 
+[![CI](https://github.com/antoinekh/markdown-priority-badges/actions/workflows/ci.yml/badge.svg)](https://github.com/antoinekh/markdown-priority-badges/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/markdown-priority-badges)](https://pypi.org/project/markdown-priority-badges/)
+[![Python versions](https://img.shields.io/pypi/pyversions/markdown-priority-badges)](https://pypi.org/project/markdown-priority-badges/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 A Python-Markdown extension that renders **priority badges** two ways: `!level` keywords inline anywhere, and a `!` / `!!` shorthand on task-list items. Works in Zensical, MkDocs, or plain Python-Markdown. The badge ships its own inline styles, so no external CSS is required.
 
 ## Why?
