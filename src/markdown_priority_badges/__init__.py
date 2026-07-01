@@ -18,7 +18,7 @@ or white) is chosen automatically for legibility against each background.
 
 import re
 import xml.etree.ElementTree as etree
-from typing import Any
+from typing import Any, Sequence
 
 from markdown import Extension
 from markdown.inlinepatterns import InlineProcessor
@@ -26,18 +26,24 @@ from markdown.treeprocessors import Treeprocessor
 
 # Built-in level -> badge background color. Config `levels` merges over this.
 DEFAULT_LEVELS = {
-    "low": "#2e7d32",       # green
-    "medium": "#f9a825",    # amber
-    "high": "#ef6c00",      # orange
+    "low": "#2e7d32",  # green
+    "medium": "#f9a825",  # amber
+    "high": "#ef6c00",  # orange
     "critical": "#d32f2f",  # red
 }
+
+# Built-in level names in ascending severity order (keys of DEFAULT_LEVELS).
+LEVELS: tuple[str, ...] = tuple(DEFAULT_LEVELS)
+
+# Leading task-list shorthand without the checkbox prefix: a run of `!` at the
+# very start of an item's text, followed by whitespace. `priority_of` works on
+# item content (the checkbox is already stripped by the caller).
+_LEADING_BANGS_RE = re.compile(r"^(!+)\s")
 
 # Task-list shorthand: checkbox prefix, a leading run of `!`, then required
 # whitespace. The checkbox part mirrors pymdownx.tasklist's own pattern so the
 # same items match. One `!` maps to "high", two or more to "critical".
-MARKER_RE = re.compile(
-    r"^(?P<checkbox> *\[(?:x|X| )\] +)(?P<bangs>!+)\s+(?P<rest>.*)", re.DOTALL
-)
+MARKER_RE = re.compile(r"^(?P<checkbox> *\[(?:x|X| )\] +)(?P<bangs>!+)\s+(?P<rest>.*)", re.DOTALL)
 
 # Shared pill geometry; per-badge background and (auto) text color are appended.
 _BADGE_STYLE = (
@@ -52,11 +58,26 @@ _BADGE_STYLE = (
 # get an auto-contrasted text color. Anything not resolvable to a hex triple
 # (other named colors, rgb()/hsl(), etc.) falls back to white text.
 _NAMED_COLORS = {
-    "black": "#000000", "white": "#ffffff", "gray": "#808080", "grey": "#808080",
-    "silver": "#c0c0c0", "red": "#ff0000", "maroon": "#800000", "orange": "#ffa500",
-    "yellow": "#ffff00", "olive": "#808000", "lime": "#00ff00", "green": "#008000",
-    "teal": "#008080", "aqua": "#00ffff", "cyan": "#00ffff", "blue": "#0000ff",
-    "navy": "#000080", "purple": "#800080", "fuchsia": "#ff00ff", "magenta": "#ff00ff",
+    "black": "#000000",
+    "white": "#ffffff",
+    "gray": "#808080",
+    "grey": "#808080",
+    "silver": "#c0c0c0",
+    "red": "#ff0000",
+    "maroon": "#800000",
+    "orange": "#ffa500",
+    "yellow": "#ffff00",
+    "olive": "#808000",
+    "lime": "#00ff00",
+    "green": "#008000",
+    "teal": "#008080",
+    "aqua": "#00ffff",
+    "cyan": "#00ffff",
+    "blue": "#0000ff",
+    "navy": "#000080",
+    "purple": "#800080",
+    "fuchsia": "#ff00ff",
+    "magenta": "#ff00ff",
     "rebeccapurple": "#663399",
 }
 
@@ -97,6 +118,28 @@ def _text_color(bg: str) -> str:
 def _shorthand_level(bangs: str) -> str:
     """One bang is 'high'; two or more collapse to 'critical'."""
     return "high" if len(bangs) == 1 else "critical"
+
+
+def level_rank(level: str, levels: Sequence[str] = LEVELS) -> int:
+    """Severity rank of `level` within `levels` (higher = more severe), or -1."""
+    return levels.index(level) if level in levels else -1
+
+
+def priority_of(text: str, levels: Sequence[str] = LEVELS) -> str | None:
+    """Highest-ranked priority level found in `text`, or None.
+
+    Considers a leading `!` / `!!` shorthand (high / critical) and every inline
+    `!<name>` keyword for `name` in `levels`. Returns the level with the greatest
+    `level_rank`. `text` is item content, with any checkbox prefix stripped."""
+    found: list[str] = []
+    if (m := _LEADING_BANGS_RE.match(text)) is not None:
+        shorthand = _shorthand_level(m.group(1))
+        if shorthand in levels:
+            found.append(shorthand)
+    found += re.findall(_inline_re(list(levels)), text)
+    if not found:
+        return None
+    return max(found, key=lambda name: level_rank(name, levels))
 
 
 def _badge_element(level: str, color: str) -> etree.Element:

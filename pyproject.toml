@@ -1,6 +1,6 @@
 [project]
 name = "markdown-priority-badges"
-version = "0.1.0"
+version = "0.2.0"
 description = "Python-Markdown extension: priority badges from !level inline keywords and ! / !! task-list shorthand"
 readme = "README.md"
 license = "MIT"

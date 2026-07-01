@@ -78,6 +78,23 @@ markdown.markdown(text, extensions=["pymdownx.tasklist", PriorityBadgesExtension
 
 Colors may be 3- or 6-digit hex (`#7b1fa2`, `#eee`) or a common CSS name (`red`, `yellow`, `rebeccapurple`); the badge text color auto-contrasts against them.
 
+## Reusing the parser
+
+The level metadata and marker parsing are exposed for tools that aggregate or filter task items (for example a todo dashboard):
+
+```python
+from markdown_priority_badges import LEVELS, level_rank, priority_of
+
+priority_of("ping !high vendor")   # -> "high" (leading !/!! or any inline keyword)
+priority_of("weekly backup")       # -> None  (no marker)
+
+# the second arg is the ordered list of names to recognise (defaults to LEVELS);
+# extend it to match custom badge levels, ranked by position:
+priority_of("!blocker access", (*LEVELS, "blocker"))  # -> "blocker"
+```
+
+`priority_of` returns the highest-ranked level found anywhere in the text, or `None`. `level_rank` gives a level's severity index.
+
 ## Install & enable
 
 ```bash

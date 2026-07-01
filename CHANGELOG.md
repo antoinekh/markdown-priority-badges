@@ -3,6 +3,10 @@
 
 ## Unreleased
 
+### Added
+
+- Public parsing API: `LEVELS`, `level_rank(level, levels=LEVELS)`, and `priority_of(text, levels=LEVELS)` for tools that aggregate or filter task items by priority.
+
 ## 0.1.0 - 2026-07-01
 
 ### Added
