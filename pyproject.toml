@@ -1,7 +1,7 @@
 [project]
 name = "markdown-priority-badges"
 version = "0.1.0"
-description = "Python-Markdown extension: priority badges from ! / !! task-list shorthand and !level inline keywords"
+description = "Python-Markdown extension: priority badges from !level inline keywords and ! / !! task-list shorthand"
 readme = "README.md"
 license = "MIT"
 authors = [{ name = "Antoine Keranflec'h" }]
