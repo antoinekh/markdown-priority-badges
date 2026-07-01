@@ -55,7 +55,7 @@ from markdown_priority_badges import PriorityBadgesExtension
 markdown.markdown(text, extensions=["pymdownx.tasklist", PriorityBadgesExtension(levels={"blocker": "#7b1fa2"})])
 ```
 
-Colors may be 3- or 6-digit hex (`#7b1fa2`, `#eee`) or a common CSS name (`red`, `yellow`, `rebeccapurple`); the badge text color auto-contrasts against them. Each badge also carries a `title="<level> priority"` for a hover tooltip and assistive tech.
+Colors may be 3- or 6-digit hex (`#7b1fa2`, `#eee`) or a common CSS name (`red`, `yellow`, `rebeccapurple`); the badge text color auto-contrasts against them. Each badge also carries a `title="<level> priority"` for a hover tooltip and assistive tech (note: Zensical's content pipeline keeps only `class`/`style` on inline HTML, so the tooltip shows in standard Python-Markdown / MkDocs but not on a Zensical-built site).
 
 ## Install & enable
 
